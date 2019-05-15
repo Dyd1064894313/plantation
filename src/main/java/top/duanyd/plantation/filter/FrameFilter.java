@@ -1,17 +1,23 @@
 package top.duanyd.plantation.filter;
 
-import top.duanyd.plantation.entity.MenuEntity;
+import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2018/8/25.
  */
 public class FrameFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(FrameFilter.class);
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -21,44 +27,43 @@ public class FrameFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String uri = request.getRequestURI();
-        if(uri.contains("/resources")){//如果包含resources路径则不过滤
+        if(uri.contains("/resources")){//如果包含resources路径则不拦截
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        String contextPath = request.getContextPath();
-        uri = uri.substring(contextPath.length());
-        List<MenuEntity> menuList = getMenuList();
-        for (MenuEntity menu : menuList){
-            if(menu.getUrl().equals(uri)){
-                menu.setSelected(true);
-            }
+        if(uri.contains("/login")){//如果登录不拦截
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
         }
-        request.getSession().setAttribute("menuList", menuList);
+        HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+        HttpSession session = httpServletRequest.getSession();
+        String userCode= session.getAttribute("userCode") == null ? "" : (String) session.getAttribute("userCode");
+        if(userCode == null || userCode.trim().length() == 0){
+            Map<String, Object> result = new HashMap<>(2);
+            result.put("code", -1);
+            result.put("message", "用户未登录");
+            String json = JSONObject.toJSONString(result);
+            PrintWriter writer = null;
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.setContentType("text/html; charset=utf-8");
+            try {
+                writer = httpServletResponse.getWriter();
+                writer.print(json);
+                writer.flush();
+            } catch (IOException ex) {
+                logger.error("response error",ex);
+            } finally {
+                if (writer != null)
+                    writer.close();
+            }
+            return ;
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
     @Override
     public void destroy() {
 
-    }
-
-    private List getMenuList(){
-        List<MenuEntity> menuList = new ArrayList<>();
-        MenuEntity indexMenu = new MenuEntity();
-        indexMenu.setCode("indexPage");
-        indexMenu.setName("首页");
-        indexMenu.setUrl("/index");
-        menuList.add(indexMenu);
-        MenuEntity ssqMenu = new MenuEntity();
-        ssqMenu.setCode("ssqMainPage");
-        ssqMenu.setName("双色球");
-        ssqMenu.setUrl("/ssq/index");
-        menuList.add(ssqMenu);
-        MenuEntity dltMenu = new MenuEntity();
-        dltMenu.setCode("dltMainPage");
-        dltMenu.setName("大乐透");
-        dltMenu.setUrl("/dlt/index");
-        menuList.add(dltMenu);
-        return menuList;
     }
 }

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.duanyd.plantation.dao.ClimateDao">
+  <resultMap id="BaseResultMap" type="top.duanyd.plantation.entity.ClimateEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="place_id" jdbcType="BIGINT" property="placeId" />
+    <result column="temperature" jdbcType="DECIMAL" property="temperature" />
+    <result column="humidity" jdbcType="DECIMAL" property="humidity" />
+    <result column="light" jdbcType="DECIMAL" property="light" />
+    <result column="co2" jdbcType="DECIMAL" property="co2" />
+    <result column="wind_speed" jdbcType="DECIMAL" property="windSpeed" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, place_id, temperature, humidity, light, co2, wind_speed, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bs_climate
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from bs_climate
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="top.duanyd.plantation.entity.ClimateEntity">
+    insert into bs_climate (id, place_id, temperature, 
+      humidity, light, co2, 
+      wind_speed, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{placeId,jdbcType=BIGINT}, #{temperature,jdbcType=DECIMAL}, 
+      #{humidity,jdbcType=DECIMAL}, #{light,jdbcType=DECIMAL}, #{co2,jdbcType=DECIMAL}, 
+      #{windSpeed,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="top.duanyd.plantation.entity.ClimateEntity">
+    insert into bs_climate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="placeId != null">
+        place_id,
+      </if>
+      <if test="temperature != null">
+        temperature,
+      </if>
+      <if test="humidity != null">
+        humidity,
+      </if>
+      <if test="light != null">
+        light,
+      </if>
+      <if test="co2 != null">
+        co2,
+      </if>
+      <if test="windSpeed != null">
+        wind_speed,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="placeId != null">
+        #{placeId,jdbcType=BIGINT},
+      </if>
+      <if test="temperature != null">
+        #{temperature,jdbcType=DECIMAL},
+      </if>
+      <if test="humidity != null">
+        #{humidity,jdbcType=DECIMAL},
+      </if>
+      <if test="light != null">
+        #{light,jdbcType=DECIMAL},
+      </if>
+      <if test="co2 != null">
+        #{co2,jdbcType=DECIMAL},
+      </if>
+      <if test="windSpeed != null">
+        #{windSpeed,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.duanyd.plantation.entity.ClimateEntity">
+    update bs_climate
+    <set>
+      <if test="placeId != null">
+        place_id = #{placeId,jdbcType=BIGINT},
+      </if>
+      <if test="temperature != null">
+        temperature = #{temperature,jdbcType=DECIMAL},
+      </if>
+      <if test="humidity != null">
+        humidity = #{humidity,jdbcType=DECIMAL},
+      </if>
+      <if test="light != null">
+        light = #{light,jdbcType=DECIMAL},
+      </if>
+      <if test="co2 != null">
+        co2 = #{co2,jdbcType=DECIMAL},
+      </if>
+      <if test="windSpeed != null">
+        wind_speed = #{windSpeed,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.duanyd.plantation.entity.ClimateEntity">
+    update bs_climate
+    set place_id = #{placeId,jdbcType=BIGINT},
+      temperature = #{temperature,jdbcType=DECIMAL},
+      humidity = #{humidity,jdbcType=DECIMAL},
+      light = #{light,jdbcType=DECIMAL},
+      co2 = #{co2,jdbcType=DECIMAL},
+      wind_speed = #{windSpeed,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
